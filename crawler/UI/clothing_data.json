@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Blue Casual Shirt",
+        "price": "$25.99",
+        "link": "https://example.com/item1"
+    },
+    {
+        "name": "Black Hoodie",
+        "price": "$39.99",
+        "link": "https://example.com/item2"
+    },
+    {
+        "name": "Slim Fit Pants",
+        "price": "$49.99",
+        "link": "https://example.com/item3"
+    }
+]
