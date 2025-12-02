@@ -1,0 +1,26 @@
+2025-12-01 17:30:54,954 - __main__ - INFO - Starting crawler for shoppearlsandplaid
+2025-12-01 17:30:55,247 - crawler - INFO - 
+--- Crawling Page 1: https://www.shoppearlsandplaid.com/collections/all ---
+2025-12-01 17:30:55,248 - crawler - INFO - Attempting to fetch: https://www.shoppearlsandplaid.com/collections/all
+2025-12-01 17:30:58,430 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.shoppearlsandplaid.com:443
+2025-12-01 17:30:59,501 - urllib3.connectionpool - DEBUG - https://www.shoppearlsandplaid.com:443 "GET /collections/all HTTP/1.1" 200 None
+2025-12-01 17:30:59,512 - crawler - INFO - Successfully fetched HTML from https://www.shoppearlsandplaid.com/collections/all
+2025-12-01 17:30:59,612 - parser - INFO - Found 24 product cards using selector 'div.product-item'
+2025-12-01 17:30:59,639 - crawler - INFO - DEBUG MODE: Limiting crawl to one page for debugging.
+2025-12-01 17:30:59,640 - __main__ - INFO - Collected 24 products from shoppearlsandplaid.
+2025-12-01 17:30:59,640 - __main__ - INFO - Crawl for shoppearlsandplaid completed!
+
+2025-12-01 17:30:59,640 - __main__ - INFO - Starting crawler for hopeandstetson
+2025-12-01 17:30:59,791 - crawler - INFO - 
+--- Crawling Page 1: https://hopeandstetson.com/collections/all ---
+2025-12-01 17:30:59,792 - crawler - INFO - Attempting to fetch: https://hopeandstetson.com/collections/all
+2025-12-01 17:31:03,136 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): hopeandstetson.com:443
+2025-12-01 17:31:03,926 - urllib3.connectionpool - DEBUG - https://hopeandstetson.com:443 "GET /collections/all HTTP/1.1" 200 None
+2025-12-01 17:31:03,937 - crawler - INFO - Successfully fetched HTML from https://hopeandstetson.com/collections/all
+2025-12-01 17:31:04,058 - parser - INFO - Found 24 product cards using selector 'product-card'
+2025-12-01 17:31:04,074 - crawler - INFO - DEBUG MODE: Limiting crawl to one page for debugging.
+2025-12-01 17:31:04,075 - __main__ - INFO - Collected 24 products from hopeandstetson.
+2025-12-01 17:31:04,075 - __main__ - INFO - Crawl for hopeandstetson completed!
+
+2025-12-01 17:31:04,078 - utils - INFO - Saved 48 products to logs/all_sites_products_2025-12-01_17-31-04.json
+2025-12-01 17:31:04,079 - __main__ - INFO - All crawls completed!
