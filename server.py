@@ -2,8 +2,10 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import subprocess
 import os
+import webbrowser
+from threading import Timer
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='crawler/UI', static_url_path='')
 CORS(app)
 
 @app.route("/run-crawler", methods=["GET"])
@@ -28,5 +30,8 @@ def run_crawler():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    def open_browser():
+        webbrowser.open_new("http://127.0.0.1:5000/ybfui.html")
 
+    Timer(2, open_browser).start()
+    app.run(port=5000, debug=True)

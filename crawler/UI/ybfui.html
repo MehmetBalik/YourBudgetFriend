@@ -208,7 +208,7 @@ async function triggerCrawl() {
     status.innerText = "⏳ Running crawler…";
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/run-crawler");
+        const res = await fetch("/run-crawler");
         const result = await res.json();
 
         if (result.status === "error") {
