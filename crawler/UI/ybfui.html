@@ -190,6 +190,7 @@
         </button>
 
         <p id="crawl-status" style="text-align:center; margin-top:10px; font-weight:bold;"></p>
+        <p id="last-updated" style="text-align:center; margin-top:5px; font-style:italic; color:#555;"></p>
     </div>
 </div>
 
@@ -212,19 +213,17 @@ async function triggerCrawl() {
         const result = await res.json();
 
         if (result.status === "error") {
-            status.innerText = result.message;
+            status.innerText = `Crawler error: ${result.message}`;
+            console.error("Crawler detailed error:", result.stdout, result.stderr);
             return;
         }
 
-        status.innerText = "Processing data…";
-
-        setTimeout(async () => {
-            await loadData();
-            status.innerText = "Data updated!";
-        }, 10000);
+        status.innerText = "Data updated successfully!";
+        await loadData(); // Directly load data once backend confirms completion
 
     } catch (err) {
-        status.innerText = "Could not reach backend.";
+        status.innerText = "Could not reach backend or an unknown error occurred.";
+        console.error("Fetch error:", err);
     }
 }
 
@@ -234,14 +233,27 @@ async function triggerCrawl() {
 async function loadData() {
     try {
         const response = await fetch("clothing_data.json");
-        items = await response.json();
+        const data = await response.json(); // Now expects an object with lastUpdated and products
 
+        items = data.products; // Extract products array
+        
         categories.clear();
         items.forEach(item => categories.add(item.category));
 
         populateCategoryDropdown();
+
+        // Display last updated timestamp
+        const lastUpdatedElement = document.getElementById("last-updated");
+        if (data.lastUpdated) {
+            lastUpdatedElement.innerText = `Last crawled: ${data.lastUpdated}`;
+        } else {
+            lastUpdatedElement.innerText = "";
+        }
+        return data; // Return the full data object
     } catch (error) {
-        console.log("clothing_data.json not found yet.");
+        console.log("clothing_data.json not found yet.", error);
+        document.getElementById("last-updated").innerText = "No data available.";
+        return null;
     }
 }
 

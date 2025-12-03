@@ -1,4 +1,4 @@
-# Website-specific configurations will be stored here.
+# Website-specific configurations is stored here.
 # This makes the crawler adaptable to different site structures.
 SITE_CONFIGS = {
     "shoppearlsandplaid": {
@@ -10,10 +10,9 @@ SITE_CONFIGS = {
             "price": {"selector": ".price", "extract_type": "complex_price"},
             "availability": {"selector": ".product-item__badge", "extract_type": "text_contains", "value": "sold out"},
             "link": {"selector": "a.product-link", "extract_type": "attribute", "attribute": "href"},
-            "pagination_next_link_rel": "next" # For <link rel="next">
+            "pagination_next_link_rel": "next"
         }
     },
-    # Future websites can be added here
     "hopeandstetson": {
         "base_url": "https://hopeandstetson.com",
         "start_path": "/collections/all",
@@ -26,4 +25,5 @@ SITE_CONFIGS = {
             "pagination_next_link_rel": "next"
         }
     }
+    # Future websites can be added here
 }
