@@ -148,13 +148,13 @@
 <div class="filter-box">
     <div class="filter-row">
 
-        <!-- CATEGORY DROPDOWN (DYNAMICALLY LOADED) -->
+        <!-- Category dropdown for search -->
         <label for="type">Clothing Type</label>
         <select id="type">
             <option value="">Any</option>
         </select>
 
-        <!-- SORTING OPTIONS -->
+        <!-- Sorting by different order -->
         <label>Sort By</label>
         <select id="sort">
             <option value="">None</option>
@@ -164,14 +164,14 @@
             <option value="nameDesc">Z → A</option>
         </select>
 
-        <!-- PRICE SLIDER -->
+        <!-- Price Slider -->
         <label>Price Range</label>
         <div class="range-slider">
             <div class="slider-track"></div>
             <div class="slider-range" id="sliderRange"></div>
 
-            <input type="range" id="minSlider" min="0" max="200" value="0" step="1" oninput="updateSlider()">
-            <input type="range" id="maxSlider" min="0" max="200" value="200" step="1" oninput="updateSlider()">
+            <input type="range" id="minSlider" min="0" max="200" value="0" step="1" oninput="updatePriceSlider()">
+            <input type="range" id="maxSlider" min="0" max="200" value="200" step="1" oninput="updatePriceSlider()">
         </div>
 
         <div class="price-values">
@@ -179,12 +179,12 @@
             <span id="maxVal">$200</span>
         </div>
 
-        <!-- SEARCH BUTTON -->
-        <button onclick="applyFilters()" style="padding:12px; background:#0077cc; border:none; color:white; border-radius:5px;">
+        <!-- Search Button -->
+        <button onclick="displayResults()" style="padding:12px; background:#0077cc; border:none; color:white; border-radius:5px;">
             Search
         </button>
 
-        <!-- CRAWLER TRIGGER BUTTON -->
+        <!-- Button that triggers crawler -->
         <button onclick="triggerCrawl()" style="padding:12px; background:#28a745; border:none; color:white; border-radius:5px;">
             Crawl New Data
         </button>
@@ -194,16 +194,14 @@
     </div>
 </div>
 
-<!-- RESULTS -->
+<!-- Results -->
 <div class="results" id="results"></div>
 
 <script>
-let items = [];
+let clothes = [];
 let categories = new Set();
 
-/* -----------------------------
-   TRIGGER BACKEND CRAWLER
-------------------------------*/
+//Function that triggers the server.py which triggers the crawler
 async function triggerCrawl() {
     const status = document.getElementById("crawl-status");
     status.innerText = "⏳ Running crawler…";
@@ -218,31 +216,29 @@ async function triggerCrawl() {
             return;
         }
 
-        status.innerText = "Data updated successfully!";
-        await loadData(); // Directly load data once backend confirms completion
+        status.innerText = "Clothing Data updated successfully!";
+        await loadClothingData(); // load data after getting confirmation for completion from backend
 
     } catch (err) {
-        status.innerText = "Could not reach backend or an unknown error occurred.";
+        status.innerText = "Unknown error occurred.";
         console.error("Fetch error:", err);
     }
 }
 
-/* -----------------------------
-   LOAD DATA JSON
-------------------------------*/
-async function loadData() {
+//Function that loads Data to the UI
+async function loadClothingData() {
     try {
         const response = await fetch("clothing_data.json");
-        const data = await response.json(); // Now expects an object with lastUpdated and products
+        const data = await response.json(); // expects object with lastUpdated and products
 
-        items = data.products; // Extract products array
+        clothes = data.products; // Extract clothing products array
         
         categories.clear();
-        items.forEach(item => categories.add(item.category));
+        clothes.forEach(item => categories.add(item.category));
 
-        populateCategoryDropdown();
+        categoryDropdown();
 
-        // Display last updated timestamp
+        // Shows last updated timestamp
         const lastUpdatedElement = document.getElementById("last-updated");
         if (data.lastUpdated) {
             lastUpdatedElement.innerText = `Last crawled: ${data.lastUpdated}`;
@@ -257,10 +253,8 @@ async function loadData() {
     }
 }
 
-/* -----------------------------
-   POPULATE CATEGORY DROPDOWN
-------------------------------*/
-function populateCategoryDropdown() {
+//Function that p
+function categoryDropdown() {
     const select = document.getElementById("type");
     select.innerHTML = `<option value="">Any</option>`;
 
@@ -272,10 +266,8 @@ function populateCategoryDropdown() {
     });
 }
 
-/* -----------------------------
-   PRICE SLIDER UPDATE
-------------------------------*/
-function updateSlider() {
+//Function that updates the Price slider
+function updatePriceSlider() {
     let min = document.getElementById("minSlider").value;
     let max = document.getElementById("maxSlider").value;
 
@@ -296,14 +288,13 @@ function updateSlider() {
     range.style.right = (100 - percentMax) + "%";
 }
 
-/* -----------------------------
-   SORTING FUNCTION
-------------------------------*/
+//Function that extract the price to float
 function extractPrice(item) {
     return parseFloat((item.price || "0").replace(/[^0-9.]/g, "")) || 0;
 }
 
-function sortItems(list, sortType) {
+//function that sort Items that you search in the chosen order
+function sortClothingItems(list, sortType) {
     if (sortType === "priceAsc") return list.sort((a, b) => extractPrice(a) - extractPrice(b));
     if (sortType === "priceDesc") return list.sort((a, b) => extractPrice(b) - extractPrice(a));
     if (sortType === "nameAsc") return list.sort((a, b) => a.name.localeCompare(b.name));
@@ -311,10 +302,8 @@ function sortItems(list, sortType) {
     return list;
 }
 
-/* -----------------------------
-   FILTER + DISPLAY RESULTS
-------------------------------*/
-function applyFilters() {
+//This function applies all the filters and displays all the results
+function displayResults() {
     const type = document.getElementById("type").value.toLowerCase();
     const sortType = document.getElementById("sort").value;
 
@@ -324,7 +313,7 @@ function applyFilters() {
     const resultsBox = document.getElementById("results");
     resultsBox.innerHTML = "";
 
-    let filtered = items.filter(item => {
+    let filtered = clothes.filter(item => {
         const price = extractPrice(item);
         const category = (item.category || "").toLowerCase();
 
@@ -335,7 +324,7 @@ function applyFilters() {
         );
     });
 
-    filtered = sortItems(filtered, sortType);
+    filtered = sortClothingItems(filtered, sortType);
 
     if (filtered.length === 0) {
         resultsBox.innerHTML = "<p style='text-align:center;'>No results found.</p>";
@@ -358,8 +347,8 @@ function applyFilters() {
     });
 }
 
-loadData();
-updateSlider();
+loadClothingData();
+updatePriceSlider();
 </script>
 
 </body>
