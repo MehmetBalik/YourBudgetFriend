@@ -1,5 +1,20 @@
-# Website-specific configurations is stored here.
-# This makes the crawler adaptable to different site structures.
+# -*- coding: utf-8 -*-
+"""
+This module stores website-specific configurations for the YourBudgetFriend crawler.
+
+It makes the crawler adaptable to different site structures by defining:
+- `base_url`: The base URL of the website.
+- `start_path`: The initial path to start crawling (e.g., /collections/all).
+- `selectors`: A dictionary of CSS selectors to extract specific product data.
+  - `product_card`: Selector for individual product listings.
+  - `name`: Selector for the product name.
+  - `price`: Selector for the product price (handled as 'complex_price' for special parsing).
+  - `availability`: Selector to determine product availability (e.g., 'sold out').
+  - `link`: Selector to extract the URL of the product page.
+  - `pagination_next_link_rel`: Indicates the 'rel' attribute value for the next pagination link.
+
+Future websites can be added to the `SITE_CONFIGS` dictionary to extend the crawler's reach.
+"""
 SITE_CONFIGS = {
     "shoppearlsandplaid": {
         "base_url": "https://www.shoppearlsandplaid.com",
@@ -25,5 +40,4 @@ SITE_CONFIGS = {
             "pagination_next_link_rel": "next"
         }
     }
-    # Future websites can be added here
 }

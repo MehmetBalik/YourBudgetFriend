@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+This script implements the Flask backend server for the YourBudgetFriend web interface.
+
+It handles:
+- Serving the static user interface files (ybfui.html + static resources).
+- Providing an API endpoint (`/run-crawler`) to trigger the web crawling process on demand.
+- Returning success or error messages from the crawler back to the frontend.
+- Automatically opening the web UI in a browser when the server starts.
+"""
+
 from flask import Flask, jsonify
 import subprocess
 import os
@@ -5,48 +16,41 @@ import webbrowser
 from threading import Timer
 
 
-# Flask backend server for the YourBudgetFriend web interface.
-
-# 1. Serves the UI (ybfui.html + static resources).
-# 2. Executes crawler on demand when user presses “Crawl New Data” in the UI.
-# 3. Returns success or error messages back to the frontend.
-
-
 app = Flask(
     __name__,
-    static_folder='crawler/UI',     # Folder with HTML and JSON UI files
-    static_url_path=''              # Serve static files at root URL ("/")
+    static_folder='crawler/UI',     # Folder containing HTML and JSON UI files
+    static_url_path=''              # Serve static files directly at the root URL ("/")
 )
 
 @app.route("/run-crawler", methods=["GET"])
 def run_crawler():
-
-    #API endpoint triggered by the UI button.
-    #Safely locates and executes the crawler which is the main.py file using subprocess.
-
-
+    """
+    API endpoint triggered by the UI button to execute the web crawler.
+    Safely locates and runs the 'main.py' crawler script using a subprocess.
+    """
     try:
-        # Construct path to crawler file
+        # Construct the full path to the crawler script.
         script_path = os.path.join(os.getcwd(), "crawler", "main.py")
 
+        # Verify that the crawler script exists to prevent silent failures.
         if not os.path.exists(script_path):
-            # Avoid silent failures
             return jsonify({
                 "status": "error",
                 "message": f"Crawler script not found at: {script_path}"
             }), 500
 
-        # Execute crawler and wait crawling is done
-        # capture_output=True reports errors to UI
+        # Execute the crawler script as a subprocess and wait for its completion.
+        # `capture_output=True` allows reporting stdout/stderr back to the UI for debugging.
         result = subprocess.run(["python", script_path], capture_output=True, text=True)
 
         if result.returncode == 0:
+            # If the crawler exits successfully, return a success message.
             return jsonify({
                 "status": "success",
                 "message": "Crawler finished successfully."
             })
         else:
-            # Return stdout and stderr for debugging
+            # If the crawler fails, return an error message along with stdout/stderr for debugging.
             return jsonify({
                 "status": "error",
                 "message": f"Crawler failed: {result.stderr}",
@@ -54,17 +58,16 @@ def run_crawler():
             }), 500
 
     except Exception as e:
-        # Catch unexpected server errors to avoid any crashes
+        # Catch any unexpected server errors and return a generic error message.
         return jsonify({"status": "error", "message": str(e)}), 500
-
-#Automatically opens ui in a browser on launch.
-#Runs Flask on localhost for safe local development.
 
 if __name__ == "__main__":
     def open_browser():
+        """Opens the web UI in a new browser tab."""
         webbrowser.open_new("http://127.0.0.1:5000/ybfui.html")
 
-    # Delay browser open slightly until server starts
+    # Schedule the browser to open shortly after the Flask server starts.
     Timer(2, open_browser).start()
 
+    # Run the Flask application on port 5000 in debug mode (set to False for production).
     app.run(port=5000, debug=False)
